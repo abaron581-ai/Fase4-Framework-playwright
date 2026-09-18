@@ -16,7 +16,11 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   // Genera reporte HTML
-  reporter: 'html',
+  // Genera reporte HTML y resultado JUnit para Azure
+  reporter: [
+  ['html'],
+  ['junit', { outputFile: 'test-results/junit.xml' }],
+  ],
 
   // Configuración general para todas las pruebas
   use: {
