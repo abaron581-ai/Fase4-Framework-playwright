@@ -36,6 +36,14 @@ steps:
   env:
     CI: 'true'
 
+- task: PublishTestResults@2
+  displayName: 'Publicar resultados de pruebas en Azure'
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'test-results/junit.xml'
+    testRunTitle: 'Pruebas E2E Playwright - OrangeHRM'
+  condition: succeededOrFailed()
+  
 - task: PublishPipelineArtifact@1
   displayName: 'Publicar reporte HTML'
   inputs:
