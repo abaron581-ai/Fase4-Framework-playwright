@@ -14,6 +14,23 @@ steps:
 - script: npm ci
   displayName: 'Instalar dependencias'
 
+  - powershell: |
+    Write-Host "Probando acceso a OrangeHRM..."
+    try {
+      $response = Invoke-WebRequest `
+        -Uri "https://opensource-demo.orangehrmlive.com/" `
+        -UseBasicParsing `
+        -TimeoutSec 30
+
+      Write-Host "OrangeHRM responde correctamente."
+      Write-Host "Status Code: $($response.StatusCode)"
+    }
+    catch {
+      Write-Error "Azure no pudo conectarse a OrangeHRM: $($_.Exception.Message)"
+      exit 1
+    }
+  displayName: 'Validar conectividad con OrangeHRM'
+
 - script: npx playwright test tests/orangehrm/employee.spec.ts
   displayName: 'Ejecutar prueba E2E OrangeHRM'
   env:
