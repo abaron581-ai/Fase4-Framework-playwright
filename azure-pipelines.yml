@@ -1,0 +1,36 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+
+- task: UseNode@1
+  displayName: 'Instalar Node.js'
+  inputs:
+    version: '22'
+
+- script: npm ci
+  displayName: 'Instalar dependencias'
+
+- script: npx playwright test tests/orangehrm/employee.spec.ts
+  displayName: 'Ejecutar prueba E2E OrangeHRM'
+  env:
+    CI: 'true'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publicar reporte HTML'
+  inputs:
+    targetPath: 'playwright-report'
+    artifact: 'playwright-report'
+    publishLocation: 'pipeline'
+  condition: succeededOrFailed()
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publicar evidencias de pruebas'
+  inputs:
+    targetPath: 'test-results'
+    artifact: 'test-results'
+    publishLocation: 'pipeline'
+  condition: succeededOrFailed()
