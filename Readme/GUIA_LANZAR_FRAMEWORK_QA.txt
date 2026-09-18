@@ -1,0 +1,355 @@
+GUÍA RÁPIDA PARA LANZAR EL PROYECTO
+Framework QA Automation con Playwright
+Versión 1.0
+Fecha: 16/09/2026
+
+============================================================
+1. UBICACIÓN ACTUAL DEL PROYECTO
+============================================================
+
+Ruta:
+C:\Users\abaro\OneDrive\Documentos\framework-qa-playwright
+
+Proyecto:
+framework-qa-playwright
+
+Tecnologías instaladas:
+- Node.js: v24.21.0
+- npm: 11.19.0
+- Git: 2.55.0.windows.5
+- Playwright
+- TypeScript
+- Google Chrome instalado localmente
+
+IMPORTANTE:
+Por un problema de timeout al descargar Chromium desde Playwright,
+el proyecto está configurado actualmente para usar el Google Chrome
+instalado en el computador mediante:
+
+channel: 'chrome'
+
+
+============================================================
+2. ABRIR EL PROYECTO EN VS CODE
+============================================================
+
+1. Abrir Visual Studio Code.
+2. Ir a:
+   File > Open Folder
+3. Seleccionar la carpeta:
+
+   C:\Users\abaro\OneDrive\Documentos\framework-qa-playwright
+
+4. Confirmar que en el panel izquierdo aparezcan carpetas y archivos
+   como:
+
+   pages/
+   tests/
+   node_modules/
+   playwright-report/
+   test-results/
+   package.json
+   package-lock.json
+   playwright.config.ts
+
+
+============================================================
+3. ABRIR LA TERMINAL
+============================================================
+
+En VS Code:
+
+Terminal > New Terminal
+
+La terminal debe quedar ubicada en algo parecido a:
+
+PS C:\Users\abaro\OneDrive\Documentos\framework-qa-playwright>
+
+Si no aparece esa ruta, significa que la terminal no está abierta
+dentro de la carpeta correcta del proyecto.
+
+
+============================================================
+4. COMPROBAR QUE EL ENTORNO ESTÁ DISPONIBLE
+============================================================
+
+Ejecutar:
+
+node -v
+
+Luego:
+
+npm.cmd -v
+
+Luego:
+
+git --version
+
+NOTA:
+Se utiliza "npm.cmd" y "npx.cmd" porque PowerShell tiene restringida
+la ejecución del archivo npm.ps1 en este equipo.
+
+Esto NO afecta el funcionamiento de npm ni de Playwright.
+
+
+============================================================
+5. EJECUTAR LAS PRUEBAS DEL PROYECTO
+============================================================
+
+Para ejecutar todas las pruebas:
+
+npx.cmd playwright test
+
+Para ejecutar solamente las pruebas de Login:
+
+npx.cmd playwright test tests/login.spec.ts
+
+Resultado esperado actualmente:
+
+2 passed
+
+Las pruebas actuales son:
+
+- Login correcto
+- Login incorrecto
+
+
+============================================================
+6. VER LA PRUEBA EJECUTÁNDOSE EN EL NAVEGADOR
+============================================================
+
+Para ejecutar Login mostrando Chrome:
+
+npx.cmd playwright test tests/login.spec.ts --headed
+
+"--headed" significa:
+Ejecutar la prueba mostrando visualmente el navegador.
+
+
+============================================================
+7. ABRIR EL ÚLTIMO REPORTE DE PLAYWRIGHT
+============================================================
+
+Ejecutar:
+
+npx.cmd playwright show-report
+
+Se abrirá en el navegador el reporte HTML de la última ejecución.
+
+El reporte permite revisar:
+- pruebas ejecutadas;
+- pruebas aprobadas;
+- pruebas fallidas;
+- duración;
+- navegador utilizado;
+- comportamiento inestable (flaky);
+- pruebas omitidas.
+
+
+============================================================
+8. ABRIR PLAYWRIGHT CODEGEN / INSPECTOR
+============================================================
+
+Como estamos usando Google Chrome local, usar:
+
+npx.cmd playwright codegen --channel=chrome https://www.saucedemo.com/
+
+Esto abre:
+1. Google Chrome.
+2. Playwright Inspector.
+
+Codegen permite:
+- grabar acciones;
+- descubrir localizadores;
+- generar código automáticamente.
+
+Para detener Codegen:
+
+Ctrl + C
+
+IMPORTANTE:
+Codegen registra prácticamente todo lo que haces, incluidos clics
+innecesarios o errores al escribir. El código generado sirve como
+ayuda, pero debe revisarse y limpiarse antes de incorporarlo al
+framework.
+
+
+============================================================
+9. ESTRUCTURA ACTUAL IMPORTANTE
+============================================================
+
+tests/
+    login.spec.ts
+
+Contiene las pruebas y define QUÉ queremos validar.
+
+
+pages/
+    login.page.ts
+
+Contiene el Page Object de Login y define CÓMO interactuar con la
+pantalla de Login.
+
+
+playwright.config.ts
+
+Contiene la configuración general de Playwright.
+Actualmente usa Google Chrome mediante:
+
+channel: 'chrome'
+
+
+============================================================
+10. LOCALIZADORES UTILIZADOS
+============================================================
+
+Actualmente SauceDemo expone atributos útiles como:
+
+[data-test="username"]
+[data-test="password"]
+[data-test="login-button"]
+[data-test="error"]
+
+Los localizadores permiten que Playwright encuentre elementos de la
+interfaz.
+
+Playwright también puede utilizar localizadores como:
+
+getByRole(...)
+getByLabel(...)
+getByPlaceholder(...)
+getByText(...)
+
+No todas las aplicaciones usan "data-test".
+La elección del localizador depende de cómo esté construida cada
+interfaz.
+
+
+============================================================
+11. TRABAJAR SIN INTERNET
+============================================================
+
+El proyecto PUEDE abrirse y Playwright puede iniciar localmente sin
+internet si:
+
+- Node.js ya está instalado;
+- las dependencias ya existen en node_modules;
+- Google Chrome está instalado;
+- no necesitas descargar nuevas librerías.
+
+PERO:
+
+Las pruebas actuales usan esta página externa:
+
+https://www.saucedemo.com/
+
+Por lo tanto, para ejecutar esas pruebas actualmente SÍ se necesita
+internet.
+
+Más adelante podremos incluir una aplicación local o un entorno de
+pruebas interno si necesitamos ejecutar pruebas completamente sin
+conexión.
+
+
+============================================================
+12. SI EL PROYECTO SE COPIA A OTRO EQUIPO
+============================================================
+
+En otro computador se necesitará, como mínimo:
+
+1. Instalar Node.js.
+2. Instalar Git.
+3. Instalar VS Code.
+4. Descargar o clonar el repositorio del framework.
+5. Abrir la carpeta del proyecto.
+6. Ejecutar:
+
+   npm install
+
+Esto reconstruye node_modules utilizando package.json y
+package-lock.json.
+
+7. Tener disponible un navegador compatible.
+
+Si se mantiene la configuración actual:
+
+channel: 'chrome'
+
+también se deberá tener Google Chrome instalado.
+
+
+============================================================
+13. COMANDOS PRINCIPALES HASTA AHORA
+============================================================
+
+Ver versión de Node.js:
+node -v
+
+Ver versión de npm:
+npm.cmd -v
+
+Ver versión de Git:
+git --version
+
+Ejecutar todas las pruebas:
+npx.cmd playwright test
+
+Ejecutar pruebas de Login:
+npx.cmd playwright test tests/login.spec.ts
+
+Ejecutar Login mostrando el navegador:
+npx.cmd playwright test tests/login.spec.ts --headed
+
+Abrir reporte:
+npx.cmd playwright show-report
+
+Abrir Codegen con Chrome:
+npx.cmd playwright codegen --channel=chrome https://www.saucedemo.com/
+
+Detener un proceso en terminal:
+Ctrl + C
+
+
+============================================================
+14. ESTADO ACTUAL DEL PROYECTO
+============================================================
+
+[OK] Node.js instalado.
+[OK] npm instalado.
+[OK] Git instalado.
+[OK] Proyecto Playwright creado.
+[OK] TypeScript seleccionado.
+[OK] Playwright Test funcionando.
+[OK] Google Chrome configurado como navegador local.
+[OK] Primera prueba de Login correcto creada.
+[OK] Prueba de Login incorrecto creada.
+[OK] Page Object Model iniciado.
+[OK] login.page.ts creado.
+[OK] login.spec.ts conectado al Page Object.
+[OK] Reporte HTML validado.
+[OK] Playwright Codegen probado.
+[OK] Localizadores data-test identificados.
+
+Pendiente:
+- Seguir fortaleciendo la estructura del framework.
+- Agregar nuevos módulos y escenarios.
+- Organizar datos de prueba.
+- Definir configuración por ambientes.
+- Configurar evidencias y trazas.
+- Preparar README técnico.
+- Crear glosario técnico.
+- Configurar Git/Azure Repos.
+- Crear Azure Pipeline.
+- Adaptar posteriormente el framework al entorno real de la empresa.
+
+
+============================================================
+15. BITÁCORA DE CAMBIOS
+============================================================
+
+Versión 1.0 - 16/09/2026
+- Creación de la guía inicial.
+- Incluye comandos de ejecución, estructura actual, solución temporal
+  con Google Chrome, Codegen, POM y estado actual del proyecto.
+
+Esta guía se irá actualizando a medida que cambie el framework.

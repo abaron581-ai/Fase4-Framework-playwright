@@ -1,0 +1,452 @@
+FLUJO RÁPIDO DEL PILOTO DE AUTOMATIZACIÓN QA
+Proyecto: Framework de Automatización E2E con Playwright
+Versión: 1.1
+Fecha: 16/09/2026
+
+============================================================
+1. IDEA GENERAL DEL PILOTO
+============================================================
+
+Objetivo:
+Construir un piloto de automatización de pruebas E2E que funcione
+completamente fuera de los sistemas reales de la empresa.
+
+La idea es demostrar que el flujo técnico funciona de principio a fin
+y, posteriormente, adaptar la misma arquitectura a los ambientes QA
+de la empresa.
+
+Concepto clave:
+
+PRIMERO:
+Piloto independiente y controlado.
+
+DESPUÉS:
+Adaptación al entorno real de la empresa.
+
+
+============================================================
+2. ¿POR QUÉ NO USAR DIRECTAMENTE LOS SISTEMAS DE LA EMPRESA?
+============================================================
+
+Para esta primera etapa queremos reducir:
+
+- Dependencia de accesos corporativos.
+- Riesgo sobre datos reales.
+- Dependencia de ambientes internos.
+- Restricciones de seguridad.
+- Dificultad para hacer pruebas repetitivas.
+- Necesidad de permisos especiales.
+
+Esto permite demostrar el valor técnico del framework antes de
+solicitar una integración real.
+
+
+============================================================
+3. LO QUE YA TENEMOS FUNCIONANDO
+============================================================
+
+Actualmente ya contamos con:
+
+- Visual Studio Code.
+- Node.js.
+- npm.
+- Git.
+- Playwright.
+- TypeScript.
+- Playwright Test.
+- Google Chrome configurado para las pruebas.
+- Ejecución de pruebas desde terminal.
+- Reportes HTML.
+- Playwright Inspector / Codegen.
+- Primeras pruebas automatizadas.
+- Login correcto.
+- Login incorrecto.
+- Inicio de arquitectura Page Object Model (POM).
+- Archivo login.spec.ts.
+- Archivo login.page.ts.
+- Uso de localizadores.
+- Identificación de atributos data-test.
+- Uso de getByRole y otros localizadores semánticos.
+
+
+============================================================
+4. ENTORNO DE APRENDIZAJE ACTUAL
+============================================================
+
+Actualmente estamos utilizando SauceDemo.
+
+SauceDemo nos ha permitido aprender:
+
+- Cómo abrir una aplicación desde Playwright.
+- Cómo localizar elementos.
+- Cómo llenar formularios.
+- Cómo hacer clic.
+- Cómo validar resultados.
+- Cómo separar pruebas y Page Objects.
+- Cómo usar Codegen.
+- Cómo generar reportes.
+
+SauceDemo se mantiene como laboratorio inicial.
+
+
+============================================================
+5. SIGUIENTE ENTORNO PARA EL PILOTO
+============================================================
+
+Para el piloto empresarial se propone utilizar una aplicación
+independiente tipo empresarial.
+
+Opción seleccionada para continuar:
+
+OrangeHRM Open Source / Demo
+
+¿Por qué?
+
+Porque permite trabajar con una aplicación que contiene:
+
+- Login.
+- Menús.
+- Módulos.
+- Formularios.
+- Búsquedas.
+- Registros.
+- Edición de información.
+- Validaciones.
+- Flujos similares a un sistema corporativo.
+
+Esto permitirá construir una demostración más cercana a un escenario
+real de empresa sin utilizar recursos internos.
+
+
+============================================================
+6. FLUJO E2E QUE QUEREMOS CONSTRUIR
+============================================================
+
+Flujo objetivo:
+
+LOGIN
+  ↓
+INGRESO A UN MÓDULO
+  ↓
+BÚSQUEDA DE INFORMACIÓN
+  ↓
+CREACIÓN DE UN REGISTRO
+  ↓
+VALIDACIÓN DEL REGISTRO CREADO
+  ↓
+MODIFICACIÓN DEL REGISTRO
+  ↓
+VALIDACIÓN DE LA MODIFICACIÓN
+  ↓
+CIERRE DE SESIÓN
+  ↓
+REPORTE DE PLAYWRIGHT
+  ↓
+EJECUCIÓN DESDE AZURE PIPELINES
+
+
+============================================================
+7. ARQUITECTURA QUE QUEREMOS DEMOSTRAR
+============================================================
+
+Ejemplo conceptual:
+
+tests/
+    flujo-completo.spec.ts
+
+pages/
+    login.page.ts
+    modulo.page.ts
+    registro.page.ts
+
+data/
+    datos-prueba.ts
+
+playwright.config.ts
+
+La lógica será:
+
+SPEC
+Define QUÉ queremos probar.
+
+PAGE OBJECT
+Define CÓMO interactuar con cada pantalla.
+
+DATA
+Contiene datos de prueba.
+
+CONFIG
+Controla la ejecución general del framework.
+
+
+============================================================
+8. QUÉ QUEREMOS DEMOSTRAR A LA EMPRESA
+============================================================
+
+El piloto debe demostrar:
+
+1. Que un flujo E2E completo puede automatizarse.
+
+2. Que las pruebas pueden organizarse de forma mantenible.
+
+3. Que se pueden reutilizar componentes mediante Page Object Model.
+
+4. Que las pruebas generan resultados claros.
+
+5. Que se pueden generar evidencias y reportes.
+
+6. Que el framework puede integrarse con control de versiones.
+
+7. Que puede ejecutarse automáticamente desde Azure Pipelines.
+
+8. Que la arquitectura puede adaptarse posteriormente a los
+   aplicativos reales de la empresa.
+
+
+============================================================
+9. FLUJO TÉCNICO FINAL ESPERADO
+============================================================
+
+El flujo correcto debe diferenciar dos elementos:
+
+A. El código de la APLICACIÓN que modifica el desarrollador.
+B. El código del FRAMEWORK DE PRUEBAS que mantiene QA.
+
+Flujo de regresión para funcionalidades ya automatizadas:
+
+DESARROLLADOR
+        ↓
+REALIZA UN CAMBIO EN LA APLICACIÓN
+        ↓
+COMMIT / PULL REQUEST DEL CÓDIGO DE LA APLICACIÓN
+        ↓
+AZURE REPOS
+        ↓
+AZURE PIPELINE
+        ↓
+DESPLIEGUE O DISPONIBILIDAD DEL CAMBIO EN AMBIENTE QA
+        ↓
+EJECUCIÓN AUTOMÁTICA DEL FRAMEWORK PLAYWRIGHT
+        ↓
+PRUEBAS E2E / REGRESIÓN
+        ↓
+PASS / FAIL
+        ↓
+REPORTE Y EVIDENCIAS
+        ↓
+QA REVISA LOS RESULTADOS
+
+IMPORTANTE:
+El desarrollador no necesita modificar ni subir el framework de QA
+cada vez que realiza un cambio en la aplicación.
+
+El framework ya contiene las pruebas automatizadas existentes y puede
+ser ejecutado automáticamente por el pipeline después de que el cambio
+de la aplicación esté disponible en el ambiente QA.
+
+Para funcionalidades completamente nuevas:
+
+DESARROLLADOR CREA O MODIFICA FUNCIONALIDAD
+        ↓
+CAMBIO DISPONIBLE EN QA
+        ↓
+QA REALIZA LA VALIDACIÓN INICIAL
+        ↓
+QA DISEÑA / ACTUALIZA EL CASO DE PRUEBA
+        ↓
+SE INCORPORA LA NUEVA PRUEBA AL FRAMEWORK
+        ↓
+A PARTIR DE ESE MOMENTO PUEDE FORMAR PARTE DE LA REGRESIÓN AUTOMÁTICA
+
+Por tanto, el framework automatiza principalmente escenarios ya
+definidos y conocidos. No identifica por sí solo qué funcionalidad
+nueva debe probarse.
+
+
+============================================================
+10. FASES DEL PILOTO
+============================================================
+
+FASE 1
+Base técnica
+Estado: avanzada
+
+- Instalaciones.
+- Playwright funcionando.
+- Primeras pruebas.
+- POM inicial.
+- Reportes.
+- Inspector.
+
+
+FASE 2
+Flujo E2E completo
+Estado: siguiente paso
+
+- Seleccionar flujo en OrangeHRM.
+- Identificar pantallas.
+- Crear Page Objects.
+- Crear pruebas.
+- Validar flujo completo.
+
+
+FASE 3
+Fortalecimiento del framework
+
+- Datos de prueba.
+- Variables de entorno.
+- Configuración por ambientes.
+- Evidencias.
+- Trazas.
+- Manejo de errores.
+- Reutilización.
+
+
+FASE 4
+Control de versiones
+
+- Repositorio.
+- Ramas.
+- Commits.
+- Pull Requests.
+- Azure Repos.
+
+
+FASE 5
+Integración continua
+
+- Azure Pipelines.
+- Pipeline YAML.
+- Definir el disparador de ejecución (commit, Pull Request o ejecución manual).
+- Ejecutar el framework cuando el cambio de la aplicación esté disponible en QA.
+- Publicación de resultados.
+- Validación PASS / FAIL.
+- Revisión de evidencias por QA.
+
+
+FASE 6
+Presentación del piloto
+
+- Mostrar flujo automático.
+- Mostrar estructura del framework.
+- Mostrar reporte.
+- Mostrar pipeline.
+- Explicar beneficios.
+- Explicar cómo se adaptaría a la empresa.
+
+
+FASE 7
+Adaptación futura
+
+- Cambiar URL.
+- Crear Page Objects de los aplicativos reales.
+- Cambiar localizadores.
+- Configurar datos QA.
+- Configurar credenciales.
+- Integrar ambientes internos.
+- Automatizar regresión real.
+
+
+============================================================
+11. MENSAJE CENTRAL PARA LA PRESENTACIÓN
+============================================================
+
+El objetivo del piloto no es automatizar inmediatamente todos los
+procesos de la empresa.
+
+El objetivo es demostrar que podemos construir una base técnica
+funcional, mantenible y escalable para automatización de pruebas E2E.
+
+Primero se valida la arquitectura en un entorno independiente.
+
+Posteriormente, la misma estructura puede adaptarse a los aplicativos
+y ambientes QA de la organización.
+
+En un escenario real, los cambios realizados por Desarrollo sobre la
+aplicación pueden activar un pipeline que ejecute automáticamente las
+pruebas de regresión ya existentes. QA interviene para revisar los
+resultados y para diseñar nuevas pruebas cuando se incorporan
+funcionalidades nuevas o cambian los criterios de validación.
+
+
+============================================================
+12. CONCEPTO CLAVE DEL PROYECTO
+============================================================
+
+Playwright NO es el framework completo.
+
+Playwright es una de las herramientas utilizadas.
+
+El framework estará compuesto por:
+
+- Playwright.
+- TypeScript.
+- Playwright Test.
+- Page Object Model.
+- Datos de prueba.
+- Configuración.
+- Reportes.
+- Git.
+- Azure Repos.
+- Azure Pipelines.
+- Reglas de organización y mantenimiento.
+
+
+============================================================
+13. ESTADO ACTUAL
+============================================================
+
+Actualmente estamos en:
+
+PRUEBA DE CONCEPTO FUNCIONAL TEMPRANA
+
+Ya demostramos que:
+
+- Playwright funciona.
+- Podemos automatizar acciones.
+- Podemos validar resultados.
+- Podemos generar reportes.
+- Podemos organizar código con POM.
+
+El siguiente paso importante es construir:
+
+UN FLUJO E2E COMPLETO
+
+
+============================================================
+14. SIGUIENTE ACCIÓN
+============================================================
+
+Abrir OrangeHRM como usuarios.
+
+Antes de escribir código:
+
+1. Revisar los módulos disponibles.
+2. Identificar un flujo completo.
+3. Definir inicio y fin del proceso.
+4. Definir qué vamos a validar.
+5. Luego convertir ese flujo en pruebas automatizadas.
+
+
+============================================================
+15. FRASE CORTA PARA EXPLICAR EL PILOTO
+============================================================
+
+"Se propone construir y validar un framework de automatización de
+pruebas E2E en un entorno independiente, demostrando su integración
+con Playwright, Git y Azure Pipelines, para posteriormente adaptarlo
+a los ambientes QA y aplicativos de la organización."
+
+
+============================================================
+16. CORRECCIÓN DE FLUJO - VERSIÓN 1.1
+============================================================
+
+Se corrigió el flujo técnico para diferenciar:
+
+- Código de la aplicación: lo modifica Desarrollo.
+- Framework de automatización: lo mantiene QA.
+- Pipeline: puede ejecutar automáticamente las pruebas ya automatizadas
+  cuando el cambio de la aplicación esté disponible en QA.
+- Funcionalidades nuevas: requieren inicialmente análisis y validación
+  de QA antes de incorporarse a la regresión automática.
