@@ -14,7 +14,7 @@ steps:
 - script: npm ci
   displayName: 'Instalar dependencias'
 
-  - powershell: |
+- powershell: |
     Write-Host "Probando acceso a OrangeHRM..."
     try {
       $response = Invoke-WebRequest `
