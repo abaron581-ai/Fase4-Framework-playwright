@@ -15,9 +15,14 @@ export class LoginPageOrangeHRM {
     this.botonLogin = page.getByRole('button', { name: 'Login' });
   }
 
-  async abrirPagina() {
-    await this.page.goto('https://opensource-demo.orangehrmlive.com/');
-  }
+  async abrirPagina(url: string) {
+  await this.page.goto(
+    url,
+    { waitUntil: 'domcontentloaded' }
+  );
+
+  await this.campoUsuario.waitFor({ state: 'visible' });
+}
 
   async iniciarSesion(usuario: string, clave: string) {
     await this.campoUsuario.fill(usuario);

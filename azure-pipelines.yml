@@ -31,10 +31,13 @@ steps:
     }
   displayName: 'Validar conectividad con OrangeHRM'
 
-- script: npx playwright test tests/orangehrm/employee.spec.ts
-  displayName: 'Ejecutar prueba E2E OrangeHRM'
+- script: npx playwright test tests/orangehrm/login.spec.ts
+  displayName: 'Ejecutar Smoke - Login OrangeHRM'
   env:
     CI: 'true'
+    ORANGEHRM_URL: $(ORANGEHRM_URL)
+    ORANGEHRM_USER: $(ORANGEHRM_USER)
+    ORANGEHRM_PASSWORD: $(ORANGEHRM_PASSWORD)
 
 - task: PublishTestResults@2
   displayName: 'Publicar resultados de pruebas en Azure'
