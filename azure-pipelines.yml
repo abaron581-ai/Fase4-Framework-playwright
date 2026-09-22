@@ -7,6 +7,15 @@ parameters:
   - smoke
   - regression
 
+- name: modulo
+  displayName: 'Módulo a ejecutar'
+  type: string
+  default: todos
+  values:
+  - todos
+  - login
+  - pim
+
 trigger:
 - main
 
@@ -39,22 +48,39 @@ steps:
       exit 1
     }
   displayName: 'Validar conectividad con OrangeHRM'
+  env:
+    ORANGEHRM_URL: $(ORANGEHRM_URL)
 
 - powershell: |
-    if ('${{ parameters.suite }}' -eq 'smoke') {
-      Write-Host "Ejecutando suite Smoke"
-      npx.cmd playwright test --grep "@smoke"
+    $suite = '${{ parameters.suite }}'
+    $modulo = '${{ parameters.modulo }}'
+
+    Write-Host "======================================"
+    Write-Host "Configuracion de ejecucion"
+    Write-Host "Suite seleccionada: $suite"
+    Write-Host "Modulo seleccionado: $modulo"
+    Write-Host "======================================"
+
+    if ($modulo -eq 'todos') {
+
+      Write-Host "Ejecutando suite completa: @$suite"
+      npx.cmd playwright test --grep "@$suite"
+
     }
-    elseif ('${{ parameters.suite }}' -eq 'regression') {
-      Write-Host "Ejecutando suite Regression"
-      npx.cmd playwright test --grep "@regression"
+    elseif ($modulo -eq 'login') {
+
+      Write-Host "Ejecutando modulo Login con suite: @$suite"
+      npx.cmd playwright test tests/orangehrm/login.spec.ts --grep "@$suite"
+
     }
-  displayName: 'Ejecutar suite seleccionada'
+
+  displayName: 'Ejecutar suite y modulo seleccionados'
   env:
     CI: 'true'
     ORANGEHRM_URL: $(ORANGEHRM_URL)
     ORANGEHRM_USER: $(ORANGEHRM_USER)
     ORANGEHRM_PASSWORD: $(ORANGEHRM_PASSWORD)
+
 
 - task: PublishTestResults@2
   displayName: 'Publicar resultados de pruebas en Azure'
