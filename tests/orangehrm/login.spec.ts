@@ -12,7 +12,12 @@ if (!url || !usuario || !clave) {
   throw new Error('Faltan variables de entorno para OrangeHRM');
 }
 
-test('Login correcto en OrangeHRM', async ({ page }) => {
+test(
+  'Login correcto en OrangeHRM',
+  {
+    tag: ['@smoke', '@regression', '@login'],
+  },
+  async ({ page }) => {
 
   const loginPage = new LoginPageOrangeHRM(page);
 

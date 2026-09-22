@@ -1,3 +1,12 @@
+parameters:
+- name: suite
+  displayName: 'Suite a ejecutar'
+  type: string
+  default: smoke
+  values:
+  - smoke
+  - regression
+
 trigger:
 - main
 
@@ -31,8 +40,16 @@ steps:
     }
   displayName: 'Validar conectividad con OrangeHRM'
 
-- script: npx playwright test tests/orangehrm/login.spec.ts
-  displayName: 'Ejecutar Smoke - Login OrangeHRM'
+- powershell: |
+    if ('${{ parameters.suite }}' -eq 'smoke') {
+      Write-Host "Ejecutando suite Smoke"
+      npx.cmd playwright test --grep "@smoke"
+    }
+    elseif ('${{ parameters.suite }}' -eq 'regression') {
+      Write-Host "Ejecutando suite Regression"
+      npx.cmd playwright test --grep "@regression"
+    }
+  displayName: 'Ejecutar suite seleccionada'
   env:
     CI: 'true'
     ORANGEHRM_URL: $(ORANGEHRM_URL)
