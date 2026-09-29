@@ -28,7 +28,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
 
     // Conserva la traza completa cuando una prueba falla
-    trace: 'retain-on-failure',
+    trace: 'on',
   },
 
   // Navegador utilizado en el proyecto
