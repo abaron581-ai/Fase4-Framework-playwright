@@ -1,4 +1,13 @@
 parameters:
+
+- name: tipoEjecucion
+  displayName: 'Tipo de ejecución'
+  type: string
+  default: normal
+  values:
+  - normal
+  - demo-error
+
 - name: suite
   displayName: 'Suite a ejecutar'
   type: string
@@ -74,7 +83,45 @@ steps:
 
     }
 
-  displayName: 'Ejecutar suite y modulo seleccionados'
+- powershell: |
+    $tipo = '${{ parameters.tipoEjecucion }}'
+    $suite = '${{ parameters.suite }}'
+    $modulo = '${{ parameters.modulo }}'
+
+    Write-Host "======================================"
+    Write-Host "Configuracion de ejecucion"
+    Write-Host "Tipo: $tipo"
+    Write-Host "Suite: $suite"
+    Write-Host "Modulo: $modulo"
+    Write-Host "======================================"
+
+    if ($tipo -eq 'demo-error') {
+
+      Write-Host "Ejecutando demostracion de error controlado"
+      npx.cmd playwright test --grep "@demo-error"
+
+    }
+    elseif ($modulo -eq 'todos') {
+
+      Write-Host "Ejecutando suite completa: @$suite"
+      npx.cmd playwright test --grep "@$suite"
+
+    }
+    elseif ($modulo -eq 'login') {
+
+      Write-Host "Ejecutando modulo Login con suite: @$suite"
+      npx.cmd playwright test tests/orangehrm/login.spec.ts --grep "@$suite"
+
+    }
+    elseif ($modulo -eq 'pim') {
+
+      Write-Host "Ejecutando modulo PIM con suite: @$suite"
+      npx.cmd playwright test tests/orangehrm/pim.spec.ts --grep "@$suite"
+
+    }
+
+  displayName: 'Ejecutar pruebas seleccionadas'
+
   env:
     CI: 'true'
     ORANGEHRM_URL: $(ORANGEHRM_URL)
