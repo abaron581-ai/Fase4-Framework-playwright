@@ -25,11 +25,14 @@ parameters:
   - login
   - pim
 
+
 trigger:
 - main
 
+
 pool:
   vmImage: 'windows-latest'
+
 
 steps:
 
@@ -38,14 +41,22 @@ steps:
   inputs:
     version: '22'
 
+
 - script: npm ci
   displayName: 'Instalar dependencias'
 
+
 - powershell: |
-    Write-Host "Probando acceso a OrangeHRM..."
+    Write-Host "Probando acceso al ambiente configurado..."
+
+    if (-not $env:ORANGEHRM_URL) {
+      Write-Error "La variable ORANGEHRM_URL no está configurada."
+      exit 1
+    }
+
     try {
       $response = Invoke-WebRequest `
-        -Uri "https://opensource-demo.orangehrmlive.com/" `
+        -Uri $env:ORANGEHRM_URL `
         -UseBasicParsing `
         -TimeoutSec 30
 
@@ -56,33 +67,59 @@ steps:
       Write-Error "Azure no pudo conectarse a OrangeHRM: $($_.Exception.Message)"
       exit 1
     }
+
   displayName: 'Validar conectividad con OrangeHRM'
+
   env:
     ORANGEHRM_URL: $(ORANGEHRM_URL)
 
+
 - powershell: |
+    $tipo = '${{ parameters.tipoEjecucion }}'
     $suite = '${{ parameters.suite }}'
     $modulo = '${{ parameters.modulo }}'
 
     Write-Host "======================================"
     Write-Host "Configuracion de ejecucion"
-    Write-Host "Suite seleccionada: $suite"
-    Write-Host "Modulo seleccionado: $modulo"
+    Write-Host "Tipo: $tipo"
+    Write-Host "Suite: $suite"
+    Write-Host "Modulo: $modulo"
     Write-Host "======================================"
 
-    if ($modulo -eq 'todos') {
+    if ($tipo -eq 'demo-error') {
+
+      Write-Host "Ejecutando demostracion de error controlado"
+
+      npx.cmd playwright test --grep "@demo-error"
+
+    }
+    elseif ($modulo -eq 'todos') {
 
       Write-Host "Ejecutando suite completa: @$suite"
+
       npx.cmd playwright test --grep "@$suite"
 
     }
     elseif ($modulo -eq 'login') {
 
       Write-Host "Ejecutando modulo Login con suite: @$suite"
-      npx.cmd playwright test tests/orangehrm/login.spec.ts --grep "@$suite"
+
+      npx.cmd playwright test `
+        tests/orangehrm/login.spec.ts `
+        --grep "@$suite"
+
+    }
+    elseif ($modulo -eq 'pim') {
+
+      Write-Host "Ejecutando modulo PIM con suite: @$suite"
+
+      npx.cmd playwright test `
+        tests/orangehrm/pim.spec.ts `
+        --grep "@$suite"
 
     }
 
+<<<<<<< HEAD
 - powershell: |
     $tipo = '${{ parameters.tipoEjecucion }}'
     $suite = '${{ parameters.suite }}'
@@ -120,6 +157,8 @@ steps:
 
     }
 
+=======
+>>>>>>> 0ebb4d0 (Ajusta parametros y validacion de variables del pipeline)
   displayName: 'Ejecutar pruebas seleccionadas'
 
   env:
@@ -136,7 +175,8 @@ steps:
     testResultsFiles: 'test-results/junit.xml'
     testRunTitle: 'Pruebas E2E Playwright - OrangeHRM'
   condition: succeededOrFailed()
-  
+
+
 - task: PublishPipelineArtifact@1
   displayName: 'Publicar reporte HTML'
   inputs:
@@ -144,6 +184,7 @@ steps:
     artifact: 'playwright-report'
     publishLocation: 'pipeline'
   condition: succeededOrFailed()
+
 
 - task: PublishPipelineArtifact@1
   displayName: 'Publicar evidencias de pruebas'
