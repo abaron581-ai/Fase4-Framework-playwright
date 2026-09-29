@@ -86,6 +86,14 @@ steps:
     Write-Host "Modulo: $modulo"
     Write-Host "======================================"
 
+    if (-not $env:ORANGEHRM_URL -or
+        -not $env:ORANGEHRM_USER -or
+        -not $env:ORANGEHRM_PASSWORD) {
+
+      Write-Error "Faltan variables de entorno requeridas para OrangeHRM."
+      exit 1
+    }
+
     if ($tipo -eq 'demo-error') {
 
       Write-Host "Ejecutando demostracion de error controlado"
@@ -119,46 +127,6 @@ steps:
 
     }
 
-<<<<<<< HEAD
-- powershell: |
-    $tipo = '${{ parameters.tipoEjecucion }}'
-    $suite = '${{ parameters.suite }}'
-    $modulo = '${{ parameters.modulo }}'
-
-    Write-Host "======================================"
-    Write-Host "Configuracion de ejecucion"
-    Write-Host "Tipo: $tipo"
-    Write-Host "Suite: $suite"
-    Write-Host "Modulo: $modulo"
-    Write-Host "======================================"
-
-    if ($tipo -eq 'demo-error') {
-
-      Write-Host "Ejecutando demostracion de error controlado"
-      npx.cmd playwright test --grep "@demo-error"
-
-    }
-    elseif ($modulo -eq 'todos') {
-
-      Write-Host "Ejecutando suite completa: @$suite"
-      npx.cmd playwright test --grep "@$suite"
-
-    }
-    elseif ($modulo -eq 'login') {
-
-      Write-Host "Ejecutando modulo Login con suite: @$suite"
-      npx.cmd playwright test tests/orangehrm/login.spec.ts --grep "@$suite"
-
-    }
-    elseif ($modulo -eq 'pim') {
-
-      Write-Host "Ejecutando modulo PIM con suite: @$suite"
-      npx.cmd playwright test tests/orangehrm/pim.spec.ts --grep "@$suite"
-
-    }
-
-=======
->>>>>>> 0ebb4d0 (Ajusta parametros y validacion de variables del pipeline)
   displayName: 'Ejecutar pruebas seleccionadas'
 
   env:
