@@ -42,14 +42,19 @@ test.describe('Pruebas de Login - OrangeHRM', () => {
       ).toBeVisible();
 
       // Evidencia explícita de una prueba exitosa.
-      const evidencia = await page.screenshot({
+      const rutaEvidencia = testInfo.outputPath(
+        'TC-DEMO-01-login-correcto.png'
+      );
+
+      await page.screenshot({
+        path: rutaEvidencia,
         fullPage: true,
       });
 
       await testInfo.attach(
-        'TC-DEMO-01 - Dashboard después del login',
+        'TC-DEMO-01 - Login correcto',
         {
-          body: evidencia,
+          path: rutaEvidencia,
           contentType: 'image/png',
         }
       );
@@ -91,14 +96,19 @@ test.describe('Pruebas de Login - OrangeHRM', () => {
       await expect(page).not.toHaveURL(/dashboard/);
 
       // Evidencia explícita del comportamiento negativo esperado.
-      const evidencia = await page.screenshot({
+      const rutaEvidencia = testInfo.outputPath(
+        'TC-DEMO-02-login-rechazado.png'
+      );
+
+      await page.screenshot({
+        path: rutaEvidencia,
         fullPage: true,
       });
 
       await testInfo.attach(
-        'TC-DEMO-02 - Credenciales rechazadas correctamente',
+        'TC-DEMO-02 - Credenciales rechazadas',
         {
-          body: evidencia,
+          path: rutaEvidencia,
           contentType: 'image/png',
         }
       );

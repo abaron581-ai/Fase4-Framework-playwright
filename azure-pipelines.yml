@@ -142,6 +142,7 @@ steps:
     testResultsFormat: 'JUnit'
     testResultsFiles: 'test-results/junit.xml'
     testRunTitle: 'Pruebas E2E Playwright - OrangeHRM'
+    publishRunAttachments: true
   condition: succeededOrFailed()
 
 

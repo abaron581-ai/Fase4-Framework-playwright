@@ -47,14 +47,19 @@ test(
     ).toBeVisible();
 
     // Evidencia explícita de ejecución exitosa.
-    const evidencia = await page.screenshot({
+    const rutaEvidencia = testInfo.outputPath(
+      'TC-DEMO-03-pim-employee-list.png'
+    );
+
+    await page.screenshot({
+      path: rutaEvidencia,
       fullPage: true,
     });
 
     await testInfo.attach(
-      'TC-DEMO-03 - Employee List cargado correctamente',
+      'TC-DEMO-03 - Employee List',
       {
-        body: evidencia,
+        path: rutaEvidencia,
         contentType: 'image/png',
       }
     );
