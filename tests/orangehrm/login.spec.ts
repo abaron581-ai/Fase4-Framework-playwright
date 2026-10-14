@@ -25,39 +25,43 @@ test.describe('Pruebas de Login - OrangeHRM', () => {
 
       const loginPage = new LoginPageOrangeHRM(page);
 
-      // Abrir OrangeHRM.
-      await loginPage.abrirPagina(url);
-
-      // Iniciar sesión con credenciales válidas.
-      await loginPage.iniciarSesion(
-        usuario,
-        clave
-      );
-
-      // Validar que el usuario llegue al Dashboard.
-      await expect(page).toHaveURL(/dashboard/);
-
-      await expect(
-        page.getByRole('heading', { name: 'Dashboard' })
-      ).toBeVisible();
-
-      // Evidencia explícita de una prueba exitosa.
-      const rutaEvidencia = testInfo.outputPath(
-        'TC-DEMO-01-login-correcto.png'
-      );
-
-      await page.screenshot({
-        path: rutaEvidencia,
-        fullPage: true,
+      await test.step('Paso 1: Abrir la página de inicio de sesión de OrangeHRM', async () => {
+        await loginPage.abrirPagina(url);
       });
 
-      await testInfo.attach(
-        'TC-DEMO-01 - Login correcto',
-        {
+      await test.step('Paso 2: Ingresar credenciales válidas e iniciar sesión', async () => {
+        await loginPage.iniciarSesion(
+          usuario,
+          clave
+        );
+      });
+
+      await test.step('Paso 3: Validar el acceso correcto al Dashboard', async () => {
+        await expect(page).toHaveURL(/dashboard/);
+
+        await expect(
+          page.getByRole('heading', { name: 'Dashboard' })
+        ).toBeVisible();
+      });
+
+      await test.step('Paso 4: Capturar y adjuntar la evidencia del resultado exitoso', async () => {
+        const rutaEvidencia = testInfo.outputPath(
+          'TC-DEMO-01-login-correcto.png'
+        );
+
+        await page.screenshot({
           path: rutaEvidencia,
-          contentType: 'image/png',
-        }
-      );
+          fullPage: true,
+        });
+
+        await testInfo.attach(
+          'TC-DEMO-01 - Login correcto',
+          {
+            path: rutaEvidencia,
+            contentType: 'image/png',
+          }
+        );
+      });
     }
   );
 
@@ -75,43 +79,46 @@ test.describe('Pruebas de Login - OrangeHRM', () => {
 
       const loginPage = new LoginPageOrangeHRM(page);
 
-      // Abrir OrangeHRM.
-      await loginPage.abrirPagina(url);
-
-      // Intentar iniciar sesión con una contraseña inválida.
-      await loginPage.iniciarSesion(
-        usuario,
-        'ClaveIncorrecta123'
-      );
-
-      // El comportamiento correcto es rechazar el acceso.
-      const mensajeError = page.getByText(
-        'Invalid credentials',
-        { exact: true }
-      );
-
-      await expect(mensajeError).toBeVisible();
-
-      // También verificamos que no haya entrado al Dashboard.
-      await expect(page).not.toHaveURL(/dashboard/);
-
-      // Evidencia explícita del comportamiento negativo esperado.
-      const rutaEvidencia = testInfo.outputPath(
-        'TC-DEMO-02-login-rechazado.png'
-      );
-
-      await page.screenshot({
-        path: rutaEvidencia,
-        fullPage: true,
+      await test.step('Paso 1: Abrir la página de inicio de sesión de OrangeHRM', async () => {
+        await loginPage.abrirPagina(url);
       });
 
-      await testInfo.attach(
-        'TC-DEMO-02 - Credenciales rechazadas',
-        {
+      await test.step('Paso 2: Intentar el acceso con una contraseña incorrecta', async () => {
+        await loginPage.iniciarSesion(
+          usuario,
+          'ClaveIncorrecta123'
+        );
+      });
+
+      await test.step('Paso 3: Validar el rechazo de las credenciales', async () => {
+        const mensajeError = page.getByText(
+          'Invalid credentials',
+          { exact: true }
+        );
+
+        await expect(mensajeError).toBeVisible();
+
+        await expect(page).not.toHaveURL(/dashboard/);
+      });
+
+      await test.step('Paso 4: Capturar y adjuntar la evidencia del rechazo esperado', async () => {
+        const rutaEvidencia = testInfo.outputPath(
+          'TC-DEMO-02-login-rechazado.png'
+        );
+
+        await page.screenshot({
           path: rutaEvidencia,
-          contentType: 'image/png',
-        }
-      );
+          fullPage: true,
+        });
+
+        await testInfo.attach(
+          'TC-DEMO-02 - Credenciales rechazadas',
+          {
+            path: rutaEvidencia,
+            contentType: 'image/png',
+          }
+        );
+      });
     }
   );
 

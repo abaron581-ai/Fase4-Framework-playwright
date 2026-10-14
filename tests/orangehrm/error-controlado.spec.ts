@@ -19,17 +19,21 @@ test(
 
     const loginPage = new LoginPageOrangeHRM(page);
 
-    await loginPage.abrirPagina(url);
+    await test.step('Paso 1: Abrir OrangeHRM e iniciar sesión correctamente', async () => {
+      await loginPage.abrirPagina(url);
 
-    await loginPage.iniciarSesion(
-      usuario,
-      clave
-    );
+      await loginPage.iniciarSesion(
+        usuario,
+        clave
+      );
+    });
 
-    // Validamos primero que el login sí funcionó
-    await expect(page).toHaveURL(/dashboard/);
+    await test.step('Paso 2: Confirmar que la precondición del Dashboard se cumple', async () => {
+      await expect(page).toHaveURL(/dashboard/);
+    });
 
-    // ERROR INTENCIONAL PARA DEMOSTRACIÓN
-    await expect(page).toHaveURL(/pagina-que-no-existe/);
+    await test.step('Paso 3: Provocar un error intencional para demostrar diagnóstico y evidencias', async () => {
+      await expect(page).toHaveURL(/pagina-que-no-existe/);
+    });
   }
 );
