@@ -86,36 +86,6 @@ steps:
     Write-Host "Modulo: $modulo"
     Write-Host "======================================"
 
-    Write-Host ""
-    Write-Host "PROCEDIMIENTO DE LA DEMOSTRACION"
-    Write-Host "1. Confirmar la suite y el modulo seleccionados."
-    Write-Host "2. Observar en el log cada paso funcional ejecutado por Playwright."
-    Write-Host "3. Verificar el resultado PASS o FAIL de cada caso."
-    Write-Host "4. Consultar las capturas, trazas y adjuntos generados."
-    Write-Host "5. Abrir el artefacto playwright-report para revisar el detalle."
-
-    if ($tipo -eq 'demo-error') {
-      Write-Host "Caso que se mostrara:"
-      Write-Host "- Demo de error controlado: login correcto y validacion final intencionalmente fallida."
-      Write-Host "Resultado esperado: FAIL, con traza y evidencia para diagnostico."
-    }
-    elseif ($suite -eq 'smoke') {
-      Write-Host "Caso que se mostrara:"
-      Write-Host "- TC-DEMO-01: login correcto con credenciales validas."
-      Write-Host "Resultado esperado: 1 caso PASS."
-    }
-    else {
-      Write-Host "Casos que se mostraran:"
-      Write-Host "- TC-DEMO-01: login correcto con credenciales validas."
-      Write-Host "- TC-DEMO-02: rechazo de una contrasena incorrecta."
-      if ($modulo -eq 'todos' -or $modulo -eq 'pim') {
-        Write-Host "- TC-DEMO-03: acceso al modulo PIM y Employee List."
-      }
-      Write-Host "Resultado esperado: los casos funcionales seleccionados quedan PASS."
-    }
-
-    Write-Host "======================================"
-
     if (-not $env:ORANGEHRM_URL -or
         -not $env:ORANGEHRM_USER -or
         -not $env:ORANGEHRM_PASSWORD) {

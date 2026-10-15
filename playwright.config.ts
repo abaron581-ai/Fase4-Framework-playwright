@@ -18,10 +18,8 @@ export default defineConfig({
   // Genera reporte HTML
   // Genera reporte HTML y resultado JUnit para Azure
   reporter: [
-    // Muestra en consola cada paso de negocio durante la demostración.
-    ['list', { printSteps: true }],
-    ['html'],
-    ['junit', { outputFile: 'test-results/junit.xml' }],
+  ['html'],
+  ['junit', { outputFile: 'test-results/junit.xml' }],
   ],
 
   // Configuración general para todas las pruebas
