@@ -1,118 +1,46 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { datosOrangeHrm } from '../../data/orangehrm.data';
 import { LoginPageOrangeHRM } from '../../pages/orangehrm/login.page';
+import { obtenerConfiguracionOrangeHrm } from '../../utils/environment';
 
-const url = process.env.ORANGEHRM_URL;
-const usuario = process.env.ORANGEHRM_USER;
-const clave = process.env.ORANGEHRM_PASSWORD;
-
-if (!url || !usuario || !clave) {
-  throw new Error('Faltan variables de entorno para OrangeHRM');
-}
-
-test.describe('Pruebas de Login - OrangeHRM', () => {
-
+test.describe('Escenarios E2E de autenticación - OrangeHRM', () => {
   test(
-    'TC-DEMO-01 - Login correcto con credenciales válidas',
-    {
-      tag: [
-        '@smoke',
-        '@regression',
-        '@login',
-        '@positive',
-      ],
-    },
-    async ({ page }, testInfo) => {
-
+    'TC-E2E-01 - Login correcto con credenciales válidas',
+    { tag: ['@e2e', '@smoke', '@regression', '@login', '@positive'] },
+    async ({ page }) => {
+      const configuracion = obtenerConfiguracionOrangeHrm();
       const loginPage = new LoginPageOrangeHRM(page);
 
-      // Abrir OrangeHRM.
-      await loginPage.abrirPagina(url);
-
-      // Iniciar sesión con credenciales válidas.
-      await loginPage.iniciarSesion(
-        usuario,
-        clave
-      );
-
-      // Validar que el usuario llegue al Dashboard.
-      await expect(page).toHaveURL(/dashboard/);
-
-      await expect(
-        page.getByRole('heading', { name: 'Dashboard' })
-      ).toBeVisible();
-
-      // Evidencia explícita de una prueba exitosa.
-      const rutaEvidencia = testInfo.outputPath(
-        'TC-DEMO-01-login-correcto.png'
-      );
-
-      await page.screenshot({
-        path: rutaEvidencia,
-        fullPage: true,
+      await test.step('Abrir OrangeHRM e iniciar sesión', async () => {
+        await loginPage.abrir(configuracion.url);
+        await loginPage.iniciarSesion(
+          configuracion.usuario,
+          configuracion.clave
+        );
       });
 
-      await testInfo.attach(
-        'TC-DEMO-01 - Login correcto',
-        {
-          path: rutaEvidencia,
-          contentType: 'image/png',
-        }
-      );
+      await test.step('Validar el acceso al Dashboard', async () => {
+        await expect(page).toHaveURL(/dashboard/);
+        await expect(loginPage.tituloDashboard).toBeVisible();
+      });
     }
   );
 
-
   test(
-    'TC-DEMO-02 - Login rechazado con contraseña incorrecta',
-    {
-      tag: [
-        '@regression',
-        '@login',
-        '@negative',
-      ],
-    },
-    async ({ page }, testInfo) => {
-
+    'TC-E2E-02 - Login rechazado con contraseña incorrecta',
+    { tag: ['@e2e', '@regression', '@login', '@negative'] },
+    async ({ page }) => {
+      const configuracion = obtenerConfiguracionOrangeHrm();
       const loginPage = new LoginPageOrangeHRM(page);
 
-      // Abrir OrangeHRM.
-      await loginPage.abrirPagina(url);
-
-      // Intentar iniciar sesión con una contraseña inválida.
+      await loginPage.abrir(configuracion.url);
       await loginPage.iniciarSesion(
-        usuario,
-        'ClaveIncorrecta123'
+        configuracion.usuario,
+        datosOrangeHrm.claveInvalida
       );
 
-      // El comportamiento correcto es rechazar el acceso.
-      const mensajeError = page.getByText(
-        'Invalid credentials',
-        { exact: true }
-      );
-
-      await expect(mensajeError).toBeVisible();
-
-      // También verificamos que no haya entrado al Dashboard.
+      await expect(loginPage.mensajeCredencialesInvalidas).toBeVisible();
       await expect(page).not.toHaveURL(/dashboard/);
-
-      // Evidencia explícita del comportamiento negativo esperado.
-      const rutaEvidencia = testInfo.outputPath(
-        'TC-DEMO-02-login-rechazado.png'
-      );
-
-      await page.screenshot({
-        path: rutaEvidencia,
-        fullPage: true,
-      });
-
-      await testInfo.attach(
-        'TC-DEMO-02 - Credenciales rechazadas',
-        {
-          path: rutaEvidencia,
-          contentType: 'image/png',
-        }
-      );
     }
   );
-
 });

@@ -9,11 +9,14 @@
     ],
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "noEmit": true
   },
   "include": [
-    "tests/**/*.ts",
+    "data/**/*.ts",
     "pages/**/*.ts",
+    "tests/**/*.ts",
+    "utils/**/*.ts",
     "playwright.config.ts"
   ]
 }

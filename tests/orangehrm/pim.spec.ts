@@ -1,67 +1,71 @@
-import { test, expect } from '@playwright/test';
-
+import { expect, test } from '@playwright/test';
+import {
+  apellidoEmpleadoUnico,
+  datosOrangeHrm,
+} from '../../data/orangehrm.data';
 import { LoginPageOrangeHRM } from '../../pages/orangehrm/login.page';
 import { PimPage } from '../../pages/orangehrm/pim.page';
+import { obtenerConfiguracionOrangeHrm } from '../../utils/environment';
 
-const url = process.env.ORANGEHRM_URL;
-const usuario = process.env.ORANGEHRM_USER;
-const clave = process.env.ORANGEHRM_PASSWORD;
+async function iniciarSesion(page: import('@playwright/test').Page): Promise<void> {
+  const configuracion = obtenerConfiguracionOrangeHrm();
+  const loginPage = new LoginPageOrangeHRM(page);
 
-if (!url || !usuario || !clave) {
-  throw new Error('Faltan variables de entorno para OrangeHRM');
+  await loginPage.abrir(configuracion.url);
+  await loginPage.iniciarSesion(configuracion.usuario, configuracion.clave);
+  await expect(page).toHaveURL(/dashboard/);
 }
 
-test(
-  'TC-DEMO-03 - Acceso al módulo PIM y Employee List',
-  {
-    tag: [
-      '@regression',
-      '@pim',
-      '@positive',
-    ],
-  },
-  async ({ page }, testInfo) => {
+test.describe('Escenarios E2E del módulo PIM - OrangeHRM', () => {
+  test(
+    'TC-E2E-03 - Acceso al módulo PIM y Employee List',
+    { tag: ['@e2e', '@smoke', '@regression', '@pim', '@positive'] },
+    async ({ page }) => {
+      const pimPage = new PimPage(page);
 
-    const loginPage = new LoginPageOrangeHRM(page);
-    const pimPage = new PimPage(page);
+      await iniciarSesion(page);
+      await pimPage.abrir();
 
-    // Login.
-    await loginPage.abrirPagina(url);
+      await expect(page).toHaveURL(/\/pim\/viewEmployeeList/);
+      await expect(pimPage.tituloInformacionEmpleado).toBeVisible();
+    }
+  );
 
-    await loginPage.iniciarSesion(
-      usuario,
-      clave
-    );
+  test(
+    'TC-E2E-04 - Creación de un empleado con datos válidos',
+    { tag: ['@e2e', '@regression', '@pim', '@positive'] },
+    async ({ page }) => {
+      const pimPage = new PimPage(page);
 
-    await expect(page).toHaveURL(/dashboard/);
+      await iniciarSesion(page);
+      await pimPage.abrir();
+      await pimPage.abrirFormularioAgregarEmpleado();
 
-    // Navegar a PIM.
-    await pimPage.abrirPim();
+      const employeeId = await pimPage.crearEmpleado(
+        datosOrangeHrm.empleado.nombre,
+        datosOrangeHrm.empleado.segundoNombre,
+        apellidoEmpleadoUnico()
+      );
 
-    // Validar que estamos dentro del módulo PIM.
-    await expect(page).toHaveURL(/pim/);
+      expect(employeeId.trim()).not.toBe('');
+      await expect(page).toHaveURL(/\/pim\/viewPersonalDetails\/empNumber\//);
+      await expect(pimPage.tituloDetallesPersonales).toBeVisible();
+    }
+  );
 
-    // Validar que la vista Employee List esté disponible.
-    await expect(
-      page.getByText('Employee Information', { exact: true })
-    ).toBeVisible();
+  test(
+    'TC-E2E-05 - Validación de campos obligatorios al crear empleado',
+    { tag: ['@e2e', '@regression', '@pim', '@negative'] },
+    async ({ page }) => {
+      const pimPage = new PimPage(page);
 
-    // Evidencia explícita de ejecución exitosa.
-    const rutaEvidencia = testInfo.outputPath(
-      'TC-DEMO-03-pim-employee-list.png'
-    );
+      await iniciarSesion(page);
+      await pimPage.abrir();
+      await pimPage.abrirFormularioAgregarEmpleado();
+      await pimPage.guardarFormularioVacio();
 
-    await page.screenshot({
-      path: rutaEvidencia,
-      fullPage: true,
-    });
-
-    await testInfo.attach(
-      'TC-DEMO-03 - Employee List',
-      {
-        path: rutaEvidencia,
-        contentType: 'image/png',
-      }
-    );
-  }
-);
+      await expect(pimPage.mensajesRequerido).toHaveCount(2);
+      await expect(page).toHaveURL(/\/pim\/addEmployee/);
+    }
+  );
+});

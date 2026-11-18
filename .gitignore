@@ -1,8 +1,21 @@
-
-# Playwright
+# Dependencias
 node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
+
+# Variables locales y secretos
+.env
+.env.*
+!.env.example
+
+# Evidencias generadas por Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+
+# Archivos locales del editor y del sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

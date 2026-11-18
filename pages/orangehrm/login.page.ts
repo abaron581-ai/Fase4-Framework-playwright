@@ -1,33 +1,30 @@
-import { Page, Locator } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export class LoginPageOrangeHRM {
-
-  readonly page: Page;
   readonly campoUsuario: Locator;
   readonly campoClave: Locator;
   readonly botonLogin: Locator;
+  readonly mensajeCredencialesInvalidas: Locator;
+  readonly tituloDashboard: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
-
+  constructor(private readonly page: Page) {
     this.campoUsuario = page.getByRole('textbox', { name: 'Username' });
     this.campoClave = page.getByRole('textbox', { name: 'Password' });
     this.botonLogin = page.getByRole('button', { name: 'Login' });
+    this.mensajeCredencialesInvalidas = page.getByText('Invalid credentials', {
+      exact: true,
+    });
+    this.tituloDashboard = page.getByRole('heading', { name: 'Dashboard' });
   }
 
-  async abrirPagina(url: string) {
-  await this.page.goto(
-    url,
-    { waitUntil: 'domcontentloaded' }
-  );
+  async abrir(url: string): Promise<void> {
+    await this.page.goto(url, { waitUntil: 'domcontentloaded' });
+    await this.campoUsuario.waitFor({ state: 'visible' });
+  }
 
-  await this.campoUsuario.waitFor({ state: 'visible' });
-}
-
-  async iniciarSesion(usuario: string, clave: string) {
+  async iniciarSesion(usuario: string, clave: string): Promise<void> {
     await this.campoUsuario.fill(usuario);
     await this.campoClave.fill(clave);
     await this.botonLogin.click();
   }
-
 }

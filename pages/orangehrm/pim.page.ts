@@ -1,57 +1,65 @@
-import { Page, Locator } from '@playwright/test';
-
+import { Locator, Page } from '@playwright/test';
 
 export class PimPage {
-
-  readonly page: Page;
   readonly menuPim: Locator;
-  readonly botonAdd: Locator;
+  readonly botonAgregar: Locator;
+  readonly tituloInformacionEmpleado: Locator;
   readonly campoNombre: Locator;
   readonly campoSegundoNombre: Locator;
   readonly campoApellido: Locator;
   readonly botonGuardar: Locator;
   readonly campoEmployeeId: Locator;
+  readonly mensajesRequerido: Locator;
+  readonly tituloDetallesPersonales: Locator;
 
-  
-
-  constructor(page: Page) {
-    this.page = page;
-
+  constructor(private readonly page: Page) {
     this.menuPim = page.getByRole('link', { name: 'PIM' });
-    this.botonAdd = page.getByRole('button', { name: 'Add' });
-    this.campoNombre = page.getByRole('textbox', { name: 'First Name' });
-    this.campoSegundoNombre = page.getByRole('textbox', { name: 'Middle Name' });
-    this.campoApellido = page.getByRole('textbox', { name: 'Last Name' });
+    this.botonAgregar = page.getByRole('button', { name: 'Add' });
+    this.tituloInformacionEmpleado = page.getByText('Employee Information', {
+      exact: true,
+    });
+    this.campoNombre = page.getByPlaceholder('First Name');
+    this.campoSegundoNombre = page.getByPlaceholder('Middle Name');
+    this.campoApellido = page.getByPlaceholder('Last Name');
     this.botonGuardar = page.getByRole('button', { name: 'Save' });
     this.campoEmployeeId = page
       .locator('.oxd-input-group')
       .filter({ hasText: 'Employee Id' })
       .locator('input');
-
+    this.mensajesRequerido = page.getByText('Required', { exact: true });
+    this.tituloDetallesPersonales = page.getByRole('heading', {
+      name: 'Personal Details',
+    });
   }
 
-  async abrirPim() {
+  async abrir(): Promise<void> {
     await this.menuPim.click();
+    await this.page.waitForURL(/\/pim\/viewEmployeeList/);
   }
 
-  async abrirAgregarEmpleado() {
-    await this.botonAdd.click();
+  async abrirFormularioAgregarEmpleado(): Promise<void> {
+    await this.botonAgregar.click();
+    await this.page.waitForURL(/\/pim\/addEmployee/);
   }
-  
+
   async crearEmpleado(
-  nombre: string,
-  segundoNombre: string,
-  apellido: string
-) {
-  await this.campoNombre.fill(nombre);
-  await this.campoSegundoNombre.fill(segundoNombre);
-  await this.campoApellido.fill(apellido);
+    nombre: string,
+    segundoNombre: string,
+    apellido: string
+  ): Promise<string> {
+    await this.campoNombre.fill(nombre);
+    await this.campoSegundoNombre.fill(segundoNombre);
+    await this.campoApellido.fill(apellido);
 
-  const employeeId = await this.campoEmployeeId.inputValue();
+    const employeeId = await this.campoEmployeeId.inputValue();
 
-  await this.botonGuardar.click();
+    await this.botonGuardar.click();
+    await this.page.waitForURL(/\/pim\/viewPersonalDetails/);
 
-  return employeeId;
-}
+    return employeeId;
+  }
 
+  async guardarFormularioVacio(): Promise<void> {
+    await this.botonGuardar.click();
+  }
 }
